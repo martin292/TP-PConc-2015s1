@@ -85,6 +85,7 @@ public class Lista {
 	//------------------------------------------------------------------------------
 	
 	public synchronized void quicksort(){
+		// TODO
 		if(!this.listaVacia()){
 			//Nodo pivot = this.getPivot();
 			//Lista left = this.menoresQue(pivot);
