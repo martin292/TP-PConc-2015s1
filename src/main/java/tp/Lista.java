@@ -16,7 +16,7 @@ public class Lista {
 	 * Retorna el tamaño de la lista
 	 * @return
 	 */
-	public int size(){
+	public synchronized int size(){
 		return cantidad;
 	}
 	
@@ -24,7 +24,7 @@ public class Lista {
 	 * Indica si la lista esta o no vacia
 	 * @return
 	 */
-	public boolean isEmpty(){
+	public synchronized boolean isEmpty(){
 		return cantidad == 0;
 	}
 	
@@ -32,7 +32,7 @@ public class Lista {
 	 * Indica si la lista contiene o no un elemento dado
 	 * @return
 	 */
-	public boolean contains(int num){
+	public synchronized boolean contains(int num){
 		return (primerNumero != null) ? primerNumero.contiene(num) : false;
 	}
 	
@@ -40,7 +40,7 @@ public class Lista {
 	 * Agrega un numero al final de la lista
 	 * @return
 	 */
-	public Lista add(int num){
+	public synchronized Lista add(int num){
 		Nodo nuevo = new Nodo();
 		this.cantidad += 1;
 		nuevo.setNumero(num);
@@ -63,7 +63,7 @@ public class Lista {
 	 * Retorna null si la lista esta vacia.
 	 * @return
 	 */
-	public int get(int posicion){
+	public synchronized int get(int posicion){
 		return (primerNumero != null) ? this.primerNumero.get(posicion): null;
 	}
 	
@@ -71,14 +71,14 @@ public class Lista {
 	 * Permite alterar el valor del elemento almacenado en una posicion dada
 	 * @return
 	 */
-	public Lista set(int num, int posicion){
+	public synchronized Lista set(int num, int posicion){
 		if(primerNumero != null){
 			this.primerNumero.set(num, posicion);
 		}
 		return this;
 	}
 	
-	public boolean listaVacia(){
+	public synchronized boolean listaVacia(){
 		return cantidad == 0;
 	}
 	
