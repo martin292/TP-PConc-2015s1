@@ -41,13 +41,50 @@ public class ListaTest {
 	@Test
 	public void testGet(){
 		lista.add(1);
-		assertTrue(lista.get(1) == 1);
+		assertTrue(lista.get(0) == 1);
 	}
 	
 	@Test
 	public void testSet(){
 		lista.add(1);
-		assertTrue(lista.set(2, 1).contains(2));
+		lista.set(0, 2);
+		assertTrue(lista.contains(2));
+	}
+	
+	@Test
+	public void testMenoresQue(){
+		lista.add(1);
+		lista.add(2);
+		lista.add(3);
+		lista.add(4);
+		lista.add(5);
+		
+		Lista nueva = lista.menoresQue(4);
+		
+		assertTrue(nueva.contains(1));
+		assertTrue(nueva.contains(2));
+		assertTrue(nueva.contains(3));
+		
+		assertFalse(nueva.contains(4));
+		assertFalse(nueva.contains(5));
+	}
+	
+	@Test
+	public void testMayoresQue(){
+		lista.add(1);
+		lista.add(2);
+		lista.add(3);
+		lista.add(4);
+		lista.add(5);
+		
+		Lista nueva = lista.mayoresQue(2);
+		
+		assertTrue(nueva.contains(3));
+		assertTrue(nueva.contains(4));
+		assertTrue(nueva.contains(5));
+		
+		assertFalse(nueva.contains(1));
+		assertFalse(nueva.contains(2));
 	}
 	
 }

@@ -1,99 +1,65 @@
 package tp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Lista {
 
-	private Nodo primerNumero;
-	private Nodo ultimoNumero;
-	private int cantidad;
+	private List<Integer> lista = new ArrayList<Integer>();	
 	
-	public Lista(){
-		primerNumero = null;
-		ultimoNumero = null;
-		cantidad = 0;
+	
+	public synchronized int size(){return lista.size();}
+
+	public synchronized boolean isEmpty(){return lista.isEmpty();}
+
+	public synchronized boolean contains(int num){return lista.contains(num);}
+
+	public synchronized void add(int num){lista.add(num);}
+
+	public synchronized int get(int pos){return lista.get(pos);}
+
+	public synchronized void set(int pos, int num){lista.set(pos, num);}
+	
+	
+	
+	public synchronized void quickSort(int t){
+		new Sorter(this, t).start();
 	}
 	
-	/**
-	 * Retorna el tamaño de la lista
-	 * @return
-	 */
-	public synchronized int size(){
-		return cantidad;
+	
+	public synchronized int getPivot(){
+		int pos = (int) (Math.random()*(0 - this.size()) + this.size());
+		return this.get(pos);
 	}
 	
-	/**
-	 * Indica si la lista esta o no vacia
-	 * @return
-	 */
-	public synchronized boolean isEmpty(){
-		return cantidad == 0;
-	}
-	
-	/**
-	 * Indica si la lista contiene o no un elemento dado
-	 * @return
-	 */
-	public synchronized boolean contains(int num){
-		return (primerNumero != null) ? primerNumero.contiene(num) : false;
-	}
-	
-	/**
-	 * Agrega un numero al final de la lista
-	 * @return
-	 */
-	public synchronized Lista add(int num){
-		Nodo nuevo = new Nodo();
-		this.cantidad += 1;
-		nuevo.setNumero(num);
-		nuevo.setPosicion(this.cantidad);
-		
-		if(this.cantidad == 1){			
-			this.primerNumero = nuevo;
-			this.ultimoNumero = nuevo;
-		}else{
-			nuevo.setNodoAnterior(this.ultimoNumero);
-			this.ultimoNumero.setNodoSiguiente(nuevo);
-			this.ultimoNumero = nuevo;
+	public synchronized Lista menoresQue(int pivot){
+		Lista menores = new Lista();
+		for (Integer num : lista){
+			if(num < pivot)
+				menores.add(num);
 		}
-				
-		return this;
+		return menores;
 	}
 	
-	/**
-	 * Retorna el elemento almacenado en una posicion dada
-	 * Retorna null si la lista esta vacia.
-	 * @return
-	 */
-	public synchronized int get(int posicion){
-		return (primerNumero != null) ? this.primerNumero.get(posicion): null;
-	}
-	
-	/**
-	 * Permite alterar el valor del elemento almacenado en una posicion dada
-	 * @return
-	 */
-	public synchronized Lista set(int num, int posicion){
-		if(primerNumero != null){
-			this.primerNumero.set(num, posicion);
+	public synchronized Lista mayoresQue(int pivot){
+		Lista mayores = new Lista();
+		for (Integer num : lista){
+			if(num > pivot)
+				mayores.add(num);
 		}
-		return this;
+		return mayores;
 	}
 	
-	public synchronized boolean listaVacia(){
-		return cantidad == 0;
+	public synchronized void concat(Lista l){
+		this.lista.addAll(l.lista);
 	}
 	
-	//------------------------------------------------------------------------------
-	
-	public synchronized void quicksort(){
-		// TODO
-		if(!this.listaVacia()){
-			//Nodo pivot = this.getPivot();
-			//Lista left = this.menoresQue(pivot);
-			//Lista right = this.mayoresQue(pivot);
-			//left.quicksort();
-			//right.quicksort();
-			//Lista l = left ++ pivot ++ right;
-		}
+	public synchronized void actualizar(Lista l){
+		this.lista = l.lista;
 	}
 	
+	public synchronized void imprimir(){
+		System.out.println(lista);
+	}
+	//
 }
