@@ -7,6 +7,7 @@ public class Lista {
 
 	private List<Integer> lista = new ArrayList<Integer>();	
 	
+	//
 	
 	public synchronized int size(){return lista.size();}
 
@@ -20,12 +21,12 @@ public class Lista {
 
 	public synchronized void set(int pos, int num){lista.set(pos, num);}
 	
-	
+	//
 	
 	public synchronized void quickSort(int t){
-		new Sorter(this, t).start();
-	}
-	
+		Sorter s = new Sorter(this, t);
+		s.start();
+	}	
 	
 	public synchronized int getPivot(){
 		int pos = (int) (Math.random()*(0 - this.size()) + this.size());
@@ -54,8 +55,10 @@ public class Lista {
 		this.lista.addAll(l.lista);
 	}
 	
-	public synchronized void actualizar(Lista l){
-		this.lista = l.lista;
+	public synchronized void actualizar(Lista left, int pivot, Lista right){
+		left.add(pivot);
+		left.concat(right);
+		this.lista = left.lista;
 	}
 	
 	public synchronized void imprimir(){

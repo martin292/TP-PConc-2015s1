@@ -18,7 +18,12 @@ public class Test {
 		lista.add(2);
 		lista.add(1);
 		
+		lista.imprimir();
+		
 		lista.quickSort(10);
+		
+		try {Thread.sleep(10000); lista.imprimir();}
+		catch (InterruptedException e) {e.printStackTrace();}
 	}
 
 }
