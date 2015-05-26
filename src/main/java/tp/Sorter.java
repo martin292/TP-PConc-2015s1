@@ -43,13 +43,13 @@ public class Sorter extends Thread{
 		notificar();		
 	}
 
-	private void notificar() {
+	private synchronized void notificar() {
 		this.ordenado = true;
 		this.original.activos -= 1;
 		notifyAll();
 	}
 
-	private boolean threadsDesordenados(Sorter l, Sorter r) {
+	private synchronized boolean threadsDesordenados(Sorter l, Sorter r) {
 		return !l.ordenado || !r.ordenado;
 	}
 	
@@ -57,7 +57,7 @@ public class Sorter extends Thread{
     public void run() {
 		try {
 			this.original.activos += 1;
-			while(threads == this.original.activos)
+			while(this.original.activos >= threads)
 				wait();
 			
 			sort();} 
