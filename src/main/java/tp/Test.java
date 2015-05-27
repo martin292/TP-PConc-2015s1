@@ -2,7 +2,7 @@ package tp;
 
 public class Test {
 
-	//Aca vamos a testear el metodo quicksort
+	//Test del metodo quicksort
 	
 	public static void main(String[] args) {
 		Lista lista = new Lista();

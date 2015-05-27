@@ -52,8 +52,10 @@ public class Sorter extends Thread{
 
 	//----------------------------------------------------------------------------------------------------------
 	
-	private boolean desordenado(Sorter s) {
-		return !s.ordenado;
+	private synchronized void notificar() {
+		ordenar();
+		decrementarThreadsActivos();
+		notifyAll();
 	}
 	
 	private synchronized void activar() throws InterruptedException {
@@ -61,7 +63,13 @@ public class Sorter extends Thread{
 		while(seAlcanzoMaxCantDeThreads())
 			wait();
 	}
-
+	
+	//
+	
+	private boolean desordenado(Sorter s) {
+		return !s.ordenado;
+	}
+	
 	private synchronized boolean seAlcanzoMaxCantDeThreads() {
 		return this.original.activos >= threads;
 	}
@@ -70,10 +78,12 @@ public class Sorter extends Thread{
 		this.original.activos += 1;
 	}
 	
-	private synchronized void notificar() {
+	private synchronized void ordenar() {
 		this.ordenado = true;
+	}
+
+	private synchronized void decrementarThreadsActivos() {
 		this.original.activos -= 1;
-		notifyAll();
 	}
 
 	private boolean listasDesordenados(Sorter l, Sorter r) {
