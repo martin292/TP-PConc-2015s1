@@ -11,57 +11,75 @@ public class Sorter extends Thread{
 	public Sorter(Lista lista, int cantThreads){
 		this.lista = lista;
 		this.threads = cantThreads;
-		this.activos = 1;
+		this.activos = 0;
 		this.original = this;
-		this.ordenado = (lista.size() <= 1);
+		this.ordenado = false;
 	}
 	
-	public Sorter(Lista lista, int cantThreads, Sorter o){
+	public Sorter(Lista lista, Sorter o){
 		this.lista = lista;
-		this.threads = cantThreads;
+		this.threads = o.threads;
 		this.original = o;
-		this.ordenado = (lista.size() <= 1);
+		this.ordenado = false;
 	}
+	
+	//----------------------------------------------------------------------------------------------------------
 	
 	public synchronized void sort() throws InterruptedException{
-		if(ordenado){
-			notificar();
-			return;
+		if(lista.size() > 1){
+			int pivot = lista.getPivot();
+			Lista left  = lista.menoresQue(pivot);
+			Lista right = lista.mayoresQue(pivot);
+
+			Sorter l = new Sorter(left , this.original);
+			Sorter r = new Sorter(right, this.original);
+			
+			l.start(); r.start();
+			
+			while(listasDesordenados(l, r))
+				wait();
+			
+			lista.actualizar(left, pivot, right);
 		}
-		int pivot = lista.getPivot();
-		Lista left = lista.menoresQue(pivot);
-		Lista right = lista.mayoresQue(pivot);
-
-		Sorter l = new Sorter(left, threads, this.original);
-		Sorter r = new Sorter(right, threads, this.original);			
-		l.start(); r.start();
-
-		while(threadsDesordenados(l, r))
-			wait();
-
-		lista.actualizar(left, pivot, right);
-		notificar();		
+		notificar();
+	}
+	
+	@Override
+    public void run() {
+		try {activar(); sort();} 
+		catch (InterruptedException e) {e.printStackTrace();}
 	}
 
+	//----------------------------------------------------------------------------------------------------------
+	
+	private boolean desordenado(Sorter s) {
+		return !s.ordenado;
+	}
+	
+	private synchronized void activar() throws InterruptedException {
+		incrementarThreadsActivos();
+		while(seAlcanzoMaxCantDeThreads())
+			wait();
+	}
+
+	private synchronized boolean seAlcanzoMaxCantDeThreads() {
+		return this.original.activos >= threads;
+	}
+
+	private synchronized void incrementarThreadsActivos() {
+		this.original.activos += 1;
+	}
+	
 	private synchronized void notificar() {
 		this.ordenado = true;
 		this.original.activos -= 1;
 		notifyAll();
 	}
 
-	private synchronized boolean threadsDesordenados(Sorter l, Sorter r) {
-		return !l.ordenado || !r.ordenado;
+	private boolean listasDesordenados(Sorter l, Sorter r) {
+		return desordenado(l) || desordenado(r);
 	}
 	
-	@Override
-    public void run() {
-		try {
-			this.original.activos += 1;
-			while(this.original.activos >= threads)
-				wait();
-			
-			sort();} 
-		catch (InterruptedException e) {e.printStackTrace();}
-	}
+	//
 	
 }
