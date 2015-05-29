@@ -26,23 +26,23 @@ public class Sorter extends Thread{
 	//----------------------------------------------------------------------------------------------------------
 	
 	public synchronized void sort() throws InterruptedException{
-		if(lista.size() > 1){
-			int pivot = lista.getPivot();
-			Lista left  = lista.menoresQue(pivot);
-			Lista right = lista.mayoresQue(pivot);
+		if(hayMasDeUnNumero()){
+			int pivot   = pivot();
+			Lista left  = menores(pivot);
+			Lista right = mayores(pivot);
 
-			Sorter l = new Sorter(left , original());
-			Sorter r = new Sorter(right, original());
+			Sorter l = nuevoThread(left);
+			Sorter r = nuevoThread(right);
 			
-			l.start(); r.start();
+			iniciarThreads(l, r);
 			
 			while(listasDesordenadas(l, r))
 				wait();
 			
-			lista.actualizar(left, pivot, right);
+			actualizarLista(pivot, left, right);
 		}
 		notificar();
-	}	
+	}				
 	
 	@Override
     public void run() {
@@ -64,7 +64,13 @@ public class Sorter extends Thread{
 			wait();
 	}
 	
-	//
+	private void iniciarThreads(Sorter l, Sorter r) {
+		l.start(); r.start();
+	}
+	
+	private void actualizarLista(int pivot, Lista left, Lista right) {
+		lista.actualizar(left, pivot, right);
+	}
 	
 	private boolean desordenada(Sorter s) {
 		return !s.ordenado;
@@ -92,6 +98,26 @@ public class Sorter extends Thread{
 	
 	private Sorter original() {
 		return this.original;
+	}
+	
+	private Lista mayores(int pivot) {
+		return lista.mayoresQue(pivot);
+	}
+
+	private Lista menores(int pivot) {
+		return lista.menoresQue(pivot);
+	}
+
+	private int pivot() {
+		return lista.getPivot();
+	}
+	
+	private boolean hayMasDeUnNumero() {
+		return lista.size() > 1;
+	}
+	
+	private Sorter nuevoThread(Lista left) {
+		return new Sorter(left , original());
 	}
 	
 	//

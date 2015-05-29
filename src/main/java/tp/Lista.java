@@ -29,8 +29,11 @@ public class Lista {
 	}	
 	
 	public synchronized int getPivot(){
-		int pos = (int) (Math.random()*(0 - this.size()) + this.size());
-		return this.get(pos);
+		return this.get(random());
+	}
+
+	private int random() {
+		return (int) (Math.random()*this.size());
 	}
 	
 	public synchronized Lista menoresQue(int pivot){
