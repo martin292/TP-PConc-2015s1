@@ -21,12 +21,9 @@ public class Lista {
 
 	public synchronized void set(int pos, int num){lista.set(pos, num);}
 	
-	//
+	public synchronized void quickSort(int t){new Sorter(this, t).start();}
 	
-	public synchronized void quickSort(int t){
-		Sorter s = new Sorter(this, t);
-		s.start();
-	}	
+	//
 	
 	public synchronized int getPivot(){
 		return this.get(random());
@@ -67,5 +64,6 @@ public class Lista {
 	public synchronized void imprimir(){
 		System.out.println(lista);
 	}
+	
 	//
 }
