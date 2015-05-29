@@ -2,11 +2,11 @@ package tp;
 
 public class Sorter extends Thread{
 
-	private Lista lista;
+	private Lista lista; //Lista a ordenar
 	private int threads; //Cantidad de threds que pueden estar activos
-	private int activos; //Cantidad de threds activos
-	private Sorter original;
-	public boolean ordenado;
+	private int activos; //Cantidad de threds activos (solo el original lo usa)
+	private Sorter original; //Thread original
+	public boolean ordenado; //Es true solo si el tamaños de la lista es <= 1
 	
 	public Sorter(Lista lista, int cantThreads){
 		this.lista = lista;
@@ -31,18 +31,18 @@ public class Sorter extends Thread{
 			Lista left  = lista.menoresQue(pivot);
 			Lista right = lista.mayoresQue(pivot);
 
-			Sorter l = new Sorter(left , this.original);
-			Sorter r = new Sorter(right, this.original);
+			Sorter l = new Sorter(left , original());
+			Sorter r = new Sorter(right, original());
 			
 			l.start(); r.start();
 			
-			while(listasDesordenados(l, r))
+			while(listasDesordenadas(l, r))
 				wait();
 			
 			lista.actualizar(left, pivot, right);
 		}
 		notificar();
-	}
+	}	
 	
 	@Override
     public void run() {
@@ -66,16 +66,16 @@ public class Sorter extends Thread{
 	
 	//
 	
-	private boolean desordenado(Sorter s) {
+	private boolean desordenada(Sorter s) {
 		return !s.ordenado;
 	}
 	
 	private synchronized boolean seAlcanzoMaxCantDeThreads() {
-		return this.original.activos >= threads;
+		return original().activos >= threads;
 	}
 
 	private synchronized void incrementarThreadsActivos() {
-		this.original.activos += 1;
+		original().activos += 1;
 	}
 	
 	private synchronized void ordenar() {
@@ -83,11 +83,15 @@ public class Sorter extends Thread{
 	}
 
 	private synchronized void decrementarThreadsActivos() {
-		this.original.activos -= 1;
+		original().activos -= 1;
 	}
 
-	private boolean listasDesordenados(Sorter l, Sorter r) {
-		return desordenado(l) || desordenado(r);
+	private boolean listasDesordenadas(Sorter l, Sorter r) {
+		return desordenada(l) || desordenada(r);
+	}
+	
+	private Sorter original() {
+		return this.original;
 	}
 	
 	//
