@@ -2,11 +2,12 @@ package tp;
 
 public class Test {
 
-	//Test del metodo quicksort // Solo ordena con un thread
+	//Test del metodo quicksort
 	
 	public static void main(String[] args) {
 		Lista lista = new Lista();
-		for(int i= 0; i < 20; i++){
+		
+		for(int i= 0; i < 100; i++){
 			int num = (int) (Math.random()*(0 - 100) + 100);
 			lista.add(num);
 		}
@@ -17,15 +18,19 @@ public class Test {
 //		lista.add(6);
 //		lista.add(5);
 //		lista.add(4);
-//		lista.add(3);
+//		lista.add(4);
 //		lista.add(2);
 //		lista.add(1);
-		
+		System.out.println("size= " + lista.size());
 		lista.imprimir();
 		
-		lista.quickSort(1);
+		lista.quickSort(1); //Solo anda con uno
 		
-		try {Thread.sleep(5000); lista.imprimir();}//Cuanto mas numeros en lista mas tiempo en el slepp
+		try {
+			Thread.sleep(7000); //Cuanto mas numeros en lista mas tiempo en el sleep
+			lista.imprimir();
+			System.out.println("size= " + lista.size()); //Menos por que no guarda repetidos
+		}
 		catch (InterruptedException e) {e.printStackTrace();}
 	}
 

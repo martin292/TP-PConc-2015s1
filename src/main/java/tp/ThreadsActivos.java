@@ -30,12 +30,11 @@ public class ThreadsActivos {
 			try { wait(); } catch (InterruptedException e) {}
 		}
 		activos++;
-		System.out.println("Threads activos= " + activos);
+//		System.out.println("Threads activos= " + activos);//Para Controlar cuantos estan activos
 		notifyAll();
 	}
 	
-	public synchronized void decrementarThreadActivos(){
-//		s.ordenado= true;
+	private void decrementarThreadActivos(){
 		activos--;
 		notifyAll();
 	}
