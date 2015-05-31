@@ -21,7 +21,9 @@ public class Lista {
 
 	public synchronized void set(int pos, int num){lista.set(pos, num);}
 	
-	public synchronized void quickSort(int t){new Sorter(this, t).start();}
+	public synchronized void quickSort(int t){
+		new Sorter(this, new ThreadsActivos(t)).start();
+	}
 	
 	//
 	

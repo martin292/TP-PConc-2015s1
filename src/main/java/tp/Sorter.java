@@ -3,24 +3,27 @@ package tp;
 public class Sorter extends Thread{
 
 	private Lista lista; //Lista a ordenar
-	private int threads; //Cantidad de threds que pueden estar activos
-	private int activos; //Cantidad de threds activos (solo el original lo usa)
+	//private int threads; //Cantidad de threds que pueden estar activos
+	//private int activos; //Cantidad de threds activos (solo el original lo usa)
 	private Sorter original; //Thread original
 	public boolean ordenado; //Es true solo si el tamaños de la lista es <= 1
+	private ThreadsActivos threadsActivos;
 	
-	public Sorter(Lista lista, int cantThreads){
+	public Sorter(Lista lista, ThreadsActivos threadsActivos){ //int cantThreads
 		this.lista = lista;
-		this.threads = cantThreads;
-		this.activos = 0;
+		//this.threads = cantThreads;
+		//this.activos = 0;
 		this.original = this;
 		this.ordenado = false;
+		this.threadsActivos= threadsActivos;
 	}
 	
-	public Sorter(Lista lista, Sorter o){
+	public Sorter(Lista lista, Sorter o, ThreadsActivos threadsActivos){
 		this.lista = lista;
-		this.threads = o.threads;
+		//this.threads = o.threads;
 		this.original = o;
 		this.ordenado = false;
+		this.threadsActivos= threadsActivos;
 	}
 	
 	//----------------------------------------------------------------------------------------------------------
@@ -31,38 +34,41 @@ public class Sorter extends Thread{
 			Lista left  = menores(pivot);
 			Lista right = mayores(pivot);
 
-			Sorter l = nuevoThread(left);
-			Sorter r = nuevoThread(right);
+			Sorter l = nuevoThread(left, threadsActivos);
+			Sorter r = nuevoThread(right, threadsActivos);
 			
-			iniciarThreads(l, r);
-			
-			while(listasDesordenadas(l, r))
-				wait();
-			
+			//iniciarThreads(l, r);
+			l.start();
+			threadsActivos.esperarSiEsNecesario(l);
+			r.start();
+			threadsActivos.esperarSiEsNecesario(r);
+//			while(listasDesordenadas(l, r))
+//				wait();
 			actualizarLista(pivot, left, right);
 		}
-		notificar();
+		//notificar();
+		threadsActivos.termino(this);
 	}				
 	
 	@Override
     public void run() {
-		try {activar(); sort();} 
+		try {/*activar();*/ threadsActivos.incrementarThreadActivos(); sort();} 
 		catch (InterruptedException e) {e.printStackTrace();}
 	}
 
 	//----------------------------------------------------------------------------------------------------------
 	
-	private synchronized void notificar() {
-		ordenar();
-		decrementarThreadsActivos();
-		notifyAll();
-	}
+//	private synchronized void notificar() {
+//		ordenar();
+//		decrementarThreadsActivos();
+//		notifyAll();
+//	}
 	
-	private synchronized void activar() throws InterruptedException {
-		incrementarThreadsActivos();
-		while(seAlcanzoMaxCantDeThreads())
-			wait();
-	}
+//	private synchronized void activar() throws InterruptedException {
+//		incrementarThreadsActivos();
+//		while(seAlcanzoMaxCantDeThreads())
+//			wait();
+//	}
 	
 	private void iniciarThreads(Sorter l, Sorter r) {
 		l.start(); r.start();
@@ -76,21 +82,21 @@ public class Sorter extends Thread{
 		return !s.ordenado;
 	}
 	
-	private synchronized boolean seAlcanzoMaxCantDeThreads() {
-		return original().activos >= threads;
-	}
-
-	private synchronized void incrementarThreadsActivos() {
-		original().activos += 1;
-	}
+//	private synchronized boolean seAlcanzoMaxCantDeThreads() {
+//		return original().activos >= threads;
+//	}
+//
+//	private synchronized void incrementarThreadsActivos() {
+//		original().activos += 1;
+//	}
 	
-	private synchronized void ordenar() {
+	public synchronized void ordenado() {
 		this.ordenado = true;
 	}
 
-	private synchronized void decrementarThreadsActivos() {
-		original().activos -= 1;
-	}
+//	private synchronized void decrementarThreadsActivos() {
+//		original().activos -= 1;
+//	}
 
 	private boolean listasDesordenadas(Sorter l, Sorter r) {
 		return desordenada(l) || desordenada(r);
@@ -116,8 +122,8 @@ public class Sorter extends Thread{
 		return lista.size() > 1;
 	}
 	
-	private Sorter nuevoThread(Lista left) {
-		return new Sorter(left , original());
+	private Sorter nuevoThread(Lista left, ThreadsActivos threadsActivos) {
+		return new Sorter(left , original(), threadsActivos);
 	}
 	
 	//
