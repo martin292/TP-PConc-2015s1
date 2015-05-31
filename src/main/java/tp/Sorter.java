@@ -43,8 +43,8 @@ public class Sorter extends Thread{
 	}
 			
 	private void iniciarThreads(Sorter l, Sorter r) throws InterruptedException {
-		l.start(); threadsActivos.esperarSiEsNecesario(l);
-		r.start(); threadsActivos.esperarSiEsNecesario(r);
+		l.start(); r.start();
+		threadsActivos.esperarSiEsNecesario(l, r);
 	}
 	
 	private void terminar() {

@@ -12,13 +12,25 @@ public class ThreadsActivos {
 	
 	//--------------------------------------------------------------------------------------------------
 
-	public synchronized void esperarSiEsNecesario(Sorter hijo) throws InterruptedException {
-		while(listaDesordenada(hijo)){ //&& seAlcansoMaxCantDeThreadsActivos()
-			decrementarThreadActivos();
-			wait();
-			incrementarThreadActivos();
+	public synchronized void esperarSiEsNecesario(Sorter l, Sorter r) throws InterruptedException {
+		while(listaDesordenada(l) || listaDesordenada(r)){
+			if(seAlcansoMaxCantDeThreadsActivos()){
+				decrementarThreadActivos();
+				wait();
+				incrementarThreadActivos();
+			}else{
+				wait();
+			}
 		}
 	}
+	
+//	public synchronized void esperarSiEsNecesario(Sorter hijo) throws InterruptedException {
+//		while(listaDesordenada(hijo)){
+//			decrementarThreadActivos();
+//			wait();
+//			incrementarThreadActivos();
+//		}
+//	}
 	
 	public synchronized void incrementarThreadActivos() throws InterruptedException{
 		while(seAlcansoMaxCantDeThreadsActivos())
