@@ -1,6 +1,7 @@
 package tp;
 
 public class ThreadsActivos {
+	
 	private int cantidadMax;
 	private int activos;
 	
@@ -8,39 +9,43 @@ public class ThreadsActivos {
 		this.cantidadMax= max;
 		this.activos= 0;
 	}
+	
+	//--------------------------------------------------------------------------------------------------
 
-	public synchronized void esperarSiEsNecesario(Sorter hijo) {
-		while(!hijo.ordenado && activos >= cantidadMax){
+	public synchronized void esperarSiEsNecesario(Sorter hijo) throws InterruptedException {
+		while(listaDesordenada(hijo)){ //&& seAlcansoMaxCantDeThreadsActivos()
 			decrementarThreadActivos();
-			try { wait(); } catch (InterruptedException e) { }
+			wait();
 			incrementarThreadActivos();
 		}
 	}
 	
-	public synchronized void esperarQueTerminen(Sorter l, Sorter r) {
-		while(!l.ordenado && !r.ordenado){
-			decrementarThreadActivos();
-			try { wait(); } catch (InterruptedException e) { }
-			incrementarThreadActivos();
-		}
-	}
-	
-	public synchronized void incrementarThreadActivos(){
-		while(activos >= cantidadMax){
-			try { wait(); } catch (InterruptedException e) {}
-		}
+	public synchronized void incrementarThreadActivos() throws InterruptedException{
+		while(seAlcansoMaxCantDeThreadsActivos())
+			wait();		
 		activos++;
-//		System.out.println("Threads activos= " + activos);//Para Controlar cuantos estan activos
-		notifyAll();
 	}
-	
-	private void decrementarThreadActivos(){
+
+	public synchronized void decrementarThreadActivos(){
 		activos--;
 		notifyAll();
 	}
 	
+	//---------------------------------------------------------------------------------------------------
+		
 	public synchronized void termino(Sorter s){
 		s.ordenado();
 		decrementarThreadActivos();
 	}
+	
+	public synchronized boolean seAlcansoMaxCantDeThreadsActivos() {
+		return activos >= cantidadMax;
+	}
+	
+	private boolean listaDesordenada(Sorter s) {
+		return !s.ordenado;
+	}
+	
+	//
+	
 }
