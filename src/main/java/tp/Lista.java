@@ -21,12 +21,19 @@ public class Lista {
 
 	public synchronized void set(int pos, int num){lista.set(pos, num);}
 	
-	public synchronized void quickSort(int t){
-		new Sorter(this, new ThreadsActivos(t)).start();
+	public synchronized void quickSort(int t) throws InterruptedException{
+		Sorter s = new Sorter(this, new ThreadsActivos(t));
+		s.start();
+		while(listaDesordenada(s))
+			wait();
 	}
 	
 	//
 	
+	private boolean listaDesordenada(Sorter s) {
+		return !s.ordenado;
+	}
+
 	public synchronized int getPivot(){
 		return this.get(random());
 	}
@@ -66,6 +73,8 @@ public class Lista {
 	public synchronized void imprimir(){
 		System.out.println(lista);
 	}
+
+	public synchronized void notificar() {notify();}
 	
 	//
 }

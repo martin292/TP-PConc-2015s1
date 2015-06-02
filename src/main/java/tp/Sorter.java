@@ -18,6 +18,7 @@ public class Sorter extends Thread{
     public void run() {
 		try {activarThread(); sort();} 
 		catch (InterruptedException e) {e.printStackTrace();}
+		finally{lista.notificar();}
 	}
 	
 	public synchronized void sort() throws InterruptedException{

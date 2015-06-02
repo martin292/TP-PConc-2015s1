@@ -24,14 +24,6 @@ public class ThreadsActivos {
 		}
 	}
 	
-//	public synchronized void esperarSiEsNecesario(Sorter hijo) throws InterruptedException {
-//		while(listaDesordenada(hijo)){
-//			decrementarThreadActivos();
-//			wait();
-//			incrementarThreadActivos();
-//		}
-//	}
-	
 	public synchronized void incrementarThreadActivos() throws InterruptedException{
 		while(seAlcansoMaxCantDeThreadsActivos())
 			wait();		

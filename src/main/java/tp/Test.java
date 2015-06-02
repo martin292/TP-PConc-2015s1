@@ -4,7 +4,7 @@ public class Test {
 
 	//Test del metodo quicksort
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		Lista lista = new Lista();
 		
 		for(int i= 0; i < 100; i++){
@@ -13,13 +13,11 @@ public class Test {
 				lista.add(num);
 		}
 		
-		System.out.println("size= " + lista.size());
 		lista.imprimir();
 		
-		lista.quickSort(25);
+		lista.quickSort(15);
 		
-		try {Thread.sleep(10000); lista.imprimir();}
-		catch (InterruptedException e) {e.printStackTrace();}
+		lista.imprimir();
 	}
 
 }
